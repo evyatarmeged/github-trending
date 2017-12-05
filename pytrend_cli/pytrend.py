@@ -1,15 +1,18 @@
+import json
+import logging
+import argparse
+from datetime import datetime
+from pprint import pprint
 import requests
 from bs4 import BeautifulSoup
-from pprint import pprint
-import argparse
-import json
-from datetime import datetime
 
 
 BASE_URL = 'https://github.com/'
 TRENDING_URL = BASE_URL + 'trending/'
 ACCEPTED_LANGUAGES = ['javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#',
                       'go', 'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html']
+logging.basicConfig(format='%(levelname)s - %(message)s', level=logging.INFO)
+LOGGER = logging.getLogger()
 
 
 # Repository information parsing functions
@@ -77,7 +80,7 @@ def parse_repositories_info(tag):
                 'Programming Language': get_programming_language(list_item),
                 'Total stars': stars,
                 'Pull requests': pull_requests,
-                'Stars today': get_stars_today(list_item)
+                'Stars Trending': get_stars_today(list_item)
             }
     return trending
 
@@ -134,6 +137,7 @@ def parse_developers_info(tag):
                 'Repository': repo_name,
                 'URL': url
             }
+    return trending
 
 # END Developer parsing functions
 
@@ -144,17 +148,17 @@ def make_connection(url):
     page = requests.get(url)
     if page.status_code != 200:
         if page.status_code == 429:
-            print('Too many requests')
+            LOGGER.error('Too many requests')
         else:
-            print('Could not establish connection with GitHub')
+            LOGGER.error('Could not establish connection with GitHub')
         return
     return page
 
 
 def add_duration_query(url):
-    if ARGS['weekly']:
+    if ARGS.get('weekly'):
         return url + '?since=weekly'
-    elif ARGS['monthly']:
+    elif ARGS.get('monthly'):
         return url + '?since=monthly'
     return url
 
@@ -162,12 +166,12 @@ def add_duration_query(url):
 def get_metadata(dev=False):
     url = TRENDING_URL
     if dev:
-        url += '/developers'
-    if ARGS['language']:
-        if ARGS['language'].lower() == 'c#':
+        url += '/developers/'
+    if ARGS.get('language'):
+        if ARGS.get('language').lower() == 'c#':
             url += 'c%23'  # Handle C# url encoding
         else:
-            url += ARGS['language'].lower()
+            url += ARGS.get('language').lower()
     url = add_duration_query(url)
     page = make_connection(url)
     soup = BeautifulSoup(page.text, 'lxml')
@@ -178,21 +182,22 @@ def get_metadata(dev=False):
 
 
 def main():
-    if ARGS['language'] & ARGS['language'].lower() not in ACCEPTED_LANGUAGES:
-        print('Specified programming language not in supported languages')
+    if ARGS.get('language') and ARGS.get('language').lower() not in ACCEPTED_LANGUAGES:
+        LOGGER.error('Specified programming language not in supported languages')
         return
-    if ARGS['weekly'] & ARGS['monthly']:
-        print('Please specify one, weekly or monthly')
-    result = get_metadata(dev=ARGS['dev'])
+    if ARGS.get('weekly') & ARGS.get('monthly'):
+        LOGGER.error('Please specify weekly OR monthly')
+        return
+    result = get_metadata(dev=ARGS.get('dev'))
     pprint(result)
     if ARGS['json']:
-        with open(str(datetime.now()), 'w+') as file:
-            file.write(json.dumps(result))
+        with open(str(datetime.now()) + '.json', 'w+') as file:
+            file.write(json.dumps(result, indent=4, sort_keys=True))
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser('Get GitHub trending repositories daily/weekly/monthly and by language')
-    parser.add_argument('-l, --language', help='Programming language to display repositories for')
+    parser = argparse.ArgumentParser('Get trending GitHub repositories daily/weekly/monthly and by language')
+    parser.add_argument('--language', help='Programming language to display repositories for')
     parser.add_argument('--dev', action='store_true', help='Get trending developers instead of repositories')
     parser.add_argument('--weekly', action='store_true', help='Display trending repositories from the past week')
     parser.add_argument('--monthly', action='store_true', help='Display trending repositories from the past month')
