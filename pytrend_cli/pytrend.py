@@ -1,18 +1,10 @@
 import json
-import logging
 import argparse
 from datetime import datetime
 from pprint import pprint
 import requests
 from bs4 import BeautifulSoup
-
-
-BASE_URL = 'https://github.com/'
-TRENDING_URL = BASE_URL + 'trending/'
-ACCEPTED_LANGUAGES = ['javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#',
-                      'go', 'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html']
-logging.basicConfig(format='%(levelname)s - %(message)s', level=logging.INFO)
-LOGGER = logging.getLogger()
+from pytrend_cli.constants import TRENDING_URL, ACCEPTED_LANGUAGES, BASE_URL, LOGGER
 
 
 # Repository information parsing functions
@@ -195,12 +187,14 @@ def main():
             file.write(json.dumps(result, indent=4, sort_keys=True))
 
 
-if __name__ == '__main__':
+def entry_point():
+    """Function to use for setup.py as a console script entry point"""
     parser = argparse.ArgumentParser('Get trending GitHub repositories daily/weekly/monthly and by language')
     parser.add_argument('--language', help='Programming language to display repositories for')
     parser.add_argument('--dev', action='store_true', help='Get trending developers instead of repositories')
     parser.add_argument('--weekly', action='store_true', help='Display trending repositories from the past week')
     parser.add_argument('--monthly', action='store_true', help='Display trending repositories from the past month')
     parser.add_argument('--json', action='store_true', help='Save data to a JSON file')
+    global ARGS
     ARGS = vars(parser.parse_args())
     main()
