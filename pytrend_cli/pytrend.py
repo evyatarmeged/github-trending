@@ -181,7 +181,8 @@ def main():
         LOGGER.error('Please specify weekly OR monthly')
         return
     result = get_metadata(dev=ARGS.get('dev'))
-    pprint(result)
+    if not ARGS.get('silent'):
+        pprint(result)
     if ARGS['json']:
         with open(str(datetime.now()) + '.json', 'w+') as file:
             file.write(json.dumps(result, indent=4, sort_keys=True))
@@ -190,11 +191,12 @@ def main():
 def entry_point():
     """Function to use for setup.py as a console script entry point"""
     parser = argparse.ArgumentParser('Get trending GitHub repositories daily/weekly/monthly and by language')
-    parser.add_argument('--language', help='Programming language to display repositories for')
+    parser.add_argument('--language', help='Display repositories for this programming language')
     parser.add_argument('--dev', action='store_true', help='Get trending developers instead of repositories')
     parser.add_argument('--weekly', action='store_true', help='Display trending repositories from the past week')
     parser.add_argument('--monthly', action='store_true', help='Display trending repositories from the past month')
     parser.add_argument('--json', action='store_true', help='Save data to a JSON file')
+    parser.add_argument('--silent', action='store_true', help='Do not write to sdout')
     global ARGS
     ARGS = vars(parser.parse_args())
     main()

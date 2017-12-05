@@ -24,11 +24,12 @@ An argument free call to `pytrend` will result in the top 25 *repositories* from
 ### Options/Flags
 ```
 optional arguments:
-  -h, --help           show this help message and exit
-  --language LANGUAGE  Programming language to display repositories for
+  -h, --help           Show this help message and exit
+  --language LANGUAGE  Display repositories for this programming language
   --dev                  Get trending developers instead of repositories
   --weekly             Display trending repositories from the past week
   --monthly           Display trending repositories from the past month
   --json                 Save data to a JSON file
+  --silent               Do not write to sdout
 ```
 

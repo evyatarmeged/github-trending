@@ -4,7 +4,7 @@ setup(
     name='pytrend-cli',
     packages=['pytrend_cli'],
     license='MIT',
-    version='1.0.7',
+    version='1.0.8',
     description='Get trending GitHub repositories daily/weekly/monthly and by language',
     author='Evyatar Meged',
     author_email='evyatarmeged@gmail.com',
