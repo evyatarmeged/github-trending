@@ -1,6 +1,11 @@
 # Pytrend-CLI
 #### A command line tool for fetching GitHub trending repositories.
 
+[![Scrutinizer Build](https://img.shields.io/scrutinizer/build/g/filp/whoops.svg?style=plastic)]()
+[![version](https://img.shields.io/badge/version-1.0.9-brightgreen.svg?style=plastic)]()
+[![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)]()
+
 ### Description
 Pytrend-CLI is a command line tool for getting the latest (actually, current, per call) information 
 about trending repositories/developers on GitHub.<br>
@@ -26,10 +31,10 @@ An argument free call to `pytrend` will result in the top 25 *repositories* from
 optional arguments:
   -h, --help           Show this help message and exit
   --language LANGUAGE  Display repositories for this programming language
-  --dev                  Get trending developers instead of repositories
+  --dev                Get trending developers instead of repositories
   --weekly             Display trending repositories from the past week
-  --monthly           Display trending repositories from the past month
-  --json                 Save data to a JSON file
-  --silent               Do not write to sdout
+  --monthly            Display trending repositories from the past month
+  --json               Save data to a JSON file
+  --silent             Do not write to sdout
 ```
 
