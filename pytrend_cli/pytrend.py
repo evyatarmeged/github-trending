@@ -1,7 +1,6 @@
 import json
 import argparse
 from datetime import datetime
-from pprint import pprint
 import requests
 from bs4 import BeautifulSoup
 from pytrend_cli.constants import TRENDING_URL, ACCEPTED_LANGUAGES, BASE_URL, LOGGER
@@ -45,7 +44,7 @@ def stars_and_pull_requests(repo_info):
         return
 
 
-def get_stars_today(repo_info):
+def get_stars_trending(repo_info):
     """Return stars gained today"""
     try:
         return repo_info.find('span', {'class': 'float-sm-right'}).text.strip()
@@ -72,7 +71,7 @@ def parse_repositories_info(tag):
                 'Programming Language': get_programming_language(list_item),
                 'Total stars': stars,
                 'Pull requests': pull_requests,
-                'Stars Trending': get_stars_today(list_item)
+                'Stars Trending': get_stars_trending(list_item)
             }
     return trending
 
@@ -180,12 +179,15 @@ def main():
     if ARGS.get('weekly') & ARGS.get('monthly'):
         LOGGER.error('Please specify weekly OR monthly')
         return
+    if ARGS.get('silent') and not ARGS.get('json'):
+        LOGGER.error('Passed silent flag without JSON flag. exiting')
+        return
     result = get_metadata(dev=ARGS.get('dev'))
     if not ARGS.get('silent'):
-        pprint(result)
-    if ARGS['json']:
+        print(json.dumps(result, indent=4))
+    if ARGS.get('json'):
         with open(str(datetime.now()) + '.json', 'w+') as file:
-            file.write(json.dumps(result, indent=4, sort_keys=True))
+            file.write(json.dumps(result, indent=4))
 
 
 def entry_point():
