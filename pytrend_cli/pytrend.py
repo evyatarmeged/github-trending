@@ -3,7 +3,8 @@ import argparse
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from pytrend_cli.constants import TRENDING_URL, ACCEPTED_LANGUAGES, BASE_URL, LOGGER
+from pytrend_cli.constants import TRENDING_URL, ACCEPTED_LANGUAGES, BASE_URL, LOGGER, ROOT, END_ROOT, RECORD,\
+    END_RECORD, ITEM, XML_DECLARATION
 
 
 # Repository information parsing functions
@@ -71,7 +72,7 @@ def parse_repositories_info(tag):
                 'Programming Language': get_programming_language(list_item),
                 'Total stars': stars,
                 'Pull requests': pull_requests,
-                'Stars Trending': get_stars_trending(list_item)
+                'Stars trending': get_stars_trending(list_item)
             }
     return trending
 
@@ -148,9 +149,9 @@ def make_connection(url):
 
 def add_duration_query(url):
     if ARGS.get('weekly'):
-        return url + '?since=weekly'
+        url += '?since=weekly'
     elif ARGS.get('monthly'):
-        return url + '?since=monthly'
+        url += '?since=monthly'
     return url
 
 
@@ -168,26 +169,45 @@ def get_metadata(dev=False):
     soup = BeautifulSoup(page.text, 'lxml')
     explore_content = soup.select('.explore-content')
     if dev:
-        return parse_developers_info(explore_content)
-    return parse_repositories_info(explore_content)
+        result = parse_developers_info(explore_content)
+    else:
+        result = parse_repositories_info(explore_content)
+    return result
+
+
+def write_xml(data):
+    xml = XML_DECLARATION + ROOT
+    for index, info in data.items():
+        xml += RECORD
+        for key, value in info.items():
+            try:
+                xml += ITEM.format(''.join(key.split()), value.encode('ascii', 'ignore').decode('utf8'))
+            except AttributeError:
+                pass
+        xml += END_RECORD
+    return xml + END_ROOT
 
 
 def main():
     if ARGS.get('language') and ARGS.get('language').lower() not in ACCEPTED_LANGUAGES:
         LOGGER.error('Specified programming language not in supported languages')
-        return
+        exit(1)
     if ARGS.get('weekly') & ARGS.get('monthly'):
         LOGGER.error('Please specify weekly OR monthly')
-        return
-    if ARGS.get('silent') and not ARGS.get('json'):
-        LOGGER.error('Passed silent flag without JSON flag. exiting')
-        return
+        exit(1)
+    if ARGS.get('silent'):
+        if not ARGS.get('json') and not ARGS.get('xml'):
+            LOGGER.error('Passed silent flag without JSON or XML flags. exiting')
+            exit(1)
     result = get_metadata(dev=ARGS.get('dev'))
     if not ARGS.get('silent'):
         print(json.dumps(result, indent=4))
     if ARGS.get('json'):
-        with open(str(datetime.now()) + '.json', 'w+') as file:
+        with open(str(datetime.now()) + '.json', 'w') as file:
             file.write(json.dumps(result, indent=4))
+    if ARGS.get('xml'):
+        with open(str(datetime.now()) + '.xml', 'w') as file:
+            file.write(write_xml(result))
 
 
 def entry_point():
@@ -198,6 +218,7 @@ def entry_point():
     parser.add_argument('--weekly', action='store_true', help='Display trending repositories from the past week')
     parser.add_argument('--monthly', action='store_true', help='Display trending repositories from the past month')
     parser.add_argument('--json', action='store_true', help='Save data to a JSON file')
+    parser.add_argument('--xml', action='store_true', help='Save data to an XML file')
     parser.add_argument('--silent', action='store_true', help='Do not write to sdout')
     global ARGS
     ARGS = vars(parser.parse_args())

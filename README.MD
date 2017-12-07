@@ -2,7 +2,7 @@
 #### A command line tool for fetching GitHub trending repositories.
 
 [![Scrutinizer Build](https://img.shields.io/scrutinizer/build/g/filp/whoops.svg?style=plastic)]()
-[![version](https://img.shields.io/badge/version-1.11-brightgreen.svg?style=plastic)]()
+[![version](https://img.shields.io/badge/version-1.12-brightgreen.svg?style=plastic)]()
 [![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)]()
 
@@ -17,11 +17,11 @@ All data is taken from <a href='https://octoverse.github.com/'>GitHub octoverse<
 
 
 ### Installation
-pip install pytrend-cli
+`pip install pytrend-cli`
 
 
 ### Usage
-Just call `pytrend` from the command line followed by (optional) wanted arguments.<br>
+Call `pytrend` from the command line followed by (optional) arguments.<br>
 Using the `--dev` flag will show information about trending developers instead of repositories. This flag can also be
 filtered with `--weekly` or `--monthly` flags, or a specified language.<br>
 An argument free call to `pytrend` will result in the top 25 *repositories* from *all* languages trending *daily*.<br>
@@ -35,6 +35,7 @@ optional arguments:
   --weekly             Display trending repositories from the past week
   --monthly            Display trending repositories from the past month
   --json               Save data to a JSON file
+  --xml                Save data to an XML file
   --silent             Do not write to sdout
 ```
 
