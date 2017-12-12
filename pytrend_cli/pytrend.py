@@ -38,8 +38,15 @@ def stars_and_pull_requests(repo_info):
     """Return total stars and pull requests"""
     try:
         data = repo_info.select('a.muted-link')
-        stars = data[0].text.strip()
-        pull_requests = data[1].text.strip()
+        # Handle no stars/pull requests data on repo
+        try:
+            stars = data[0].text.strip()
+        except IndexError:
+            stars = None
+        try:
+            pull_requests = data[1].text.strip()
+        except IndexError:
+            pull_requests = None
         return stars, pull_requests
     except AttributeError:
         return

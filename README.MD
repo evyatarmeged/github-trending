@@ -2,7 +2,7 @@
 #### A command line tool for fetching GitHub trending repositories.
 
 [![Scrutinizer Build](https://img.shields.io/scrutinizer/build/g/filp/whoops.svg?style=plastic)]()
-[![version](https://img.shields.io/badge/version-1.12-brightgreen.svg?style=plastic)]()
+[![version](https://img.shields.io/badge/version-1.13-brightgreen.svg?style=plastic)]()
 [![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)]()
 
