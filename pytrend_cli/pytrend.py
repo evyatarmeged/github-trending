@@ -12,7 +12,15 @@ from pytrend_cli.constants import TRENDING_URL, ACCEPTED_LANGUAGES, BASE_URL, LO
 def username_and_reponame(repo_info):
     """Return user name and repository name"""
     try:
-        _, username, repo_name = repo_info.find('a').get('href').split('/')
+        data = repo_info.find('a').get('href').split('/')
+        try:
+            username = data[1]
+        except IndexError:
+            username = None
+        try:
+            repo_name = data[2]
+        except IndexError:
+            repo_name = None
         return username, repo_name
     except AttributeError:
         return
@@ -150,7 +158,7 @@ def make_connection(url):
             LOGGER.error('Too many requests')
         else:
             LOGGER.error('Could not establish connection with GitHub')
-        return
+        exit(1)
     return page
 
 
@@ -160,6 +168,19 @@ def add_duration_query(url):
     elif ARGS.get('monthly'):
         url += '?since=monthly'
     return url
+
+
+def write_xml(data):
+    xml = XML_DECLARATION + ROOT
+    for index, info in data.items():
+        xml += RECORD
+        for key, value in info.items():
+            try:
+                xml += ITEM.format(''.join(key.split()), value.encode('ascii', 'ignore').decode('utf8'))
+            except AttributeError:
+                pass
+        xml += END_RECORD
+    return xml + END_ROOT
 
 
 def get_metadata(dev=False):
@@ -180,19 +201,6 @@ def get_metadata(dev=False):
     else:
         result = parse_repositories_info(explore_content)
     return result
-
-
-def write_xml(data):
-    xml = XML_DECLARATION + ROOT
-    for index, info in data.items():
-        xml += RECORD
-        for key, value in info.items():
-            try:
-                xml += ITEM.format(''.join(key.split()), value.encode('ascii', 'ignore').decode('utf8'))
-            except AttributeError:
-                pass
-        xml += END_RECORD
-    return xml + END_ROOT
 
 
 def main():
