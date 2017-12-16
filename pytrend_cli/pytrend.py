@@ -178,7 +178,7 @@ def make_connection(url):
     return page
 
 
-def add_duration_query(weekly, monthly, url):
+def add_duration_query(url, weekly=None, monthly=None):
     """Add duration according to arguments"""
     if weekly:
         url += '?since=weekly'
@@ -201,7 +201,7 @@ def write_xml(data):
     return xml + END_ROOT
 
 
-def build_url(language, dev, monthly, weekly):
+def build_url(language=None, dev=None, monthly=None, weekly=None):
     """Build destination URL according to arguments"""
     url = TRENDING_URL
     if dev:
@@ -211,13 +211,13 @@ def build_url(language, dev, monthly, weekly):
             url += 'c%23'  # Handle C# url encoding
         else:
             url += language.lower()
-    url = add_duration_query(weekly, monthly, url)
+    url = add_duration_query(url=url, weekly=weekly, monthly=monthly)
     return url
 
 
 def get_metadata(language, dev, monthly, weekly):
     """Build URL, connect to page and create BeautifulSoup object, build and return result"""
-    url = build_url(language, dev, monthly, weekly)
+    url = build_url(language=language, dev=dev, monthly=monthly, weekly=weekly)
     page = make_connection(url)
     soup = BeautifulSoup(page.text, 'lxml')
     explore_content = soup.select('.explore-content')
@@ -251,7 +251,7 @@ def main(language, dev, weekly, monthly, json, xml, silent):
         if not json and not xml:
             LOGGER.error('Passed silent flag without JSON or XML flags. exiting')
             exit(1)
-    result = get_metadata(language, dev, monthly, weekly)
+    result = get_metadata(language=language, dev=dev, monthly=monthly, weekly=weekly)
     if not silent:
         print(JSON.dumps(result, indent=4))
     if json:
