@@ -1,10 +1,25 @@
-import json
-import argparse
+import logging
+import click
 from datetime import datetime
+import json as JSON  # Importing as caps to enable @click argument `json`
 import requests
 from bs4 import BeautifulSoup
-from pytrend_cli.constants import TRENDING_URL, ACCEPTED_LANGUAGES, BASE_URL, LOGGER, ROOT, END_ROOT, RECORD,\
-    END_RECORD, ITEM, XML_DECLARATION
+
+
+# Constants
+
+BASE_URL = 'https://github.com/'
+TRENDING_URL = BASE_URL + 'trending/'
+ACCEPTED_LANGUAGES = ['javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#',
+                      'go', 'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html']
+logging.basicConfig(format='%(levelname)s - %(message)s', level=logging.INFO)
+LOGGER = logging.getLogger()
+XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8" ?>\n'
+RECORD = '\t<record>\n'
+END_RECORD = '\t</record>\n'
+ITEM = '\t\t<{0}>{1}</{0}>\n'
+ROOT = '<root>\n'
+END_ROOT = '</root>'
 
 
 # Repository information parsing functions
@@ -162,10 +177,10 @@ def make_connection(url):
     return page
 
 
-def add_duration_query(url):
-    if ARGS.get('weekly'):
+def add_duration_query(weekly, monthly, url):
+    if weekly:
         url += '?since=weekly'
-    elif ARGS.get('monthly'):
+    elif monthly:
         url += '?since=monthly'
     return url
 
@@ -183,16 +198,16 @@ def write_xml(data):
     return xml + END_ROOT
 
 
-def get_metadata(dev=False):
+def get_metadata(language, dev, monthly, weekly):
     url = TRENDING_URL
     if dev:
         url += '/developers/'
-    if ARGS.get('language'):
-        if ARGS.get('language').lower() == 'c#':
+    if language:
+        if language.lower() == 'c#':
             url += 'c%23'  # Handle C# url encoding
         else:
-            url += ARGS.get('language').lower()
-    url = add_duration_query(url)
+            url += language.lower()
+    url = add_duration_query(weekly, monthly, url)
     page = make_connection(url)
     soup = BeautifulSoup(page.text, 'lxml')
     explore_content = soup.select('.explore-content')
@@ -203,38 +218,31 @@ def get_metadata(dev=False):
     return result
 
 
-def main():
-    if ARGS.get('language') and ARGS.get('language').lower() not in ACCEPTED_LANGUAGES:
+@click.command()
+@click.option('--language', '-l', help='Display repositories for this programming language')
+@click.option('--dev', '-d', is_flag=True, help='Get trending developers instead of repositories')
+@click.option('--weekly', '-w', is_flag=True, help='Display trending repositories from the past week')
+@click.option('--monthly', '-m', is_flag=True, help='Display trending repositories from the past month')
+@click.option('--json', '-j', is_flag=True, help='Save data to a JSON file')
+@click.option('--xml', '-x', is_flag=True, help='Save data to an XML file')
+@click.option('--silent', '-s', is_flag=True, help='Do not write to sdout')
+def main(language, dev, weekly, monthly, json, xml, silent):
+    if language and language.lower() not in ACCEPTED_LANGUAGES:
         LOGGER.error('Specified programming language not in supported languages')
         exit(1)
-    if ARGS.get('weekly') & ARGS.get('monthly'):
+    if weekly and monthly:
         LOGGER.error('Please specify weekly OR monthly')
         exit(1)
-    if ARGS.get('silent'):
-        if not ARGS.get('json') and not ARGS.get('xml'):
+    if silent:
+        if not json and not xml:
             LOGGER.error('Passed silent flag without JSON or XML flags. exiting')
             exit(1)
-    result = get_metadata(dev=ARGS.get('dev'))
-    if not ARGS.get('silent'):
-        print(json.dumps(result, indent=4))
-    if ARGS.get('json'):
+    result = get_metadata(language, dev, monthly, weekly)
+    if not silent:
+        print(JSON.dumps(result, indent=4))
+    if json:
         with open(str(datetime.now()) + '.json', 'w') as file:
-            file.write(json.dumps(result, indent=4))
-    if ARGS.get('xml'):
+            file.write(JSON.dumps(result, indent=4))
+    if xml:
         with open(str(datetime.now()) + '.xml', 'w') as file:
             file.write(write_xml(result))
-
-
-def entry_point():
-    """Function to use for setup.py as a console script entry point"""
-    parser = argparse.ArgumentParser('Get trending GitHub repositories daily/weekly/monthly and by language')
-    parser.add_argument('--language', help='Display repositories for this programming language')
-    parser.add_argument('--dev', action='store_true', help='Get trending developers instead of repositories')
-    parser.add_argument('--weekly', action='store_true', help='Display trending repositories from the past week')
-    parser.add_argument('--monthly', action='store_true', help='Display trending repositories from the past month')
-    parser.add_argument('--json', action='store_true', help='Save data to a JSON file')
-    parser.add_argument('--xml', action='store_true', help='Save data to an XML file')
-    parser.add_argument('--silent', action='store_true', help='Do not write to sdout')
-    global ARGS
-    ARGS = vars(parser.parse_args())
-    main()
