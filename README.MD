@@ -2,7 +2,7 @@
 #### A command line tool for fetching GitHub trending repositories.
 
 [![Scrutinizer Build](https://img.shields.io/scrutinizer/build/g/filp/whoops.svg?style=plastic)]()
-[![version](https://img.shields.io/badge/version-1.14-brightgreen.svg?style=plastic)]()
+[![version](https://img.shields.io/badge/version-1.16-brightgreen.svg?style=plastic)]()
 [![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)]()
 
@@ -28,14 +28,15 @@ An argument free call to `pytrend` will result in the top 25 *repositories* from
 
 ### Options/Flags
 ```
-optional arguments:
-  -h, --help           Show this help message and exit
-  --language LANGUAGE  Display repositories for this programming language
+Usage: pytrend.py [OPTIONS]
+Options:
+  -l, --language TEXT  Display repositories for this programming language
   --dev                Get trending developers instead of repositories
-  --weekly             Display trending repositories from the past week
-  --monthly            Display trending repositories from the past month
-  --json               Save data to a JSON file
-  --xml                Save data to an XML file
+  -w, --weekly         Display trending repositories from the past week
+  -m, --monthly        Display trending repositories from the past month
+  -j, --json           Save data to a JSON file
+  -x, --xml            Save data to an XML file
   --silent             Do not write to sdout
+  --help               Show this message and exit.
 ```
 
