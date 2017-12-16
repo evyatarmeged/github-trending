@@ -76,7 +76,7 @@ def stars_and_pull_requests(repo_info):
 
 
 def get_stars_trending(repo_info):
-    """Return stars gained today"""
+    """Return stars trending"""
     try:
         return repo_info.find('span', {'class': 'float-sm-right'}).text.strip()
     except AttributeError:
@@ -167,6 +167,7 @@ def parse_developers_info(tag):
 # All around functions
 
 def make_connection(url):
+    """Establish connection with url"""
     page = requests.get(url)
     if page.status_code != 200:
         if page.status_code == 429:
@@ -178,6 +179,7 @@ def make_connection(url):
 
 
 def add_duration_query(weekly, monthly, url):
+    """Add duration according to arguments"""
     if weekly:
         url += '?since=weekly'
     elif monthly:
@@ -186,6 +188,7 @@ def add_duration_query(weekly, monthly, url):
 
 
 def write_xml(data):
+    """Write XML file """
     xml = XML_DECLARATION + ROOT
     for index, info in data.items():
         xml += RECORD
@@ -198,7 +201,8 @@ def write_xml(data):
     return xml + END_ROOT
 
 
-def get_metadata(language, dev, monthly, weekly):
+def build_url(language, dev, monthly, weekly):
+    """Build destination URL according to arguments"""
     url = TRENDING_URL
     if dev:
         url += '/developers/'
@@ -208,6 +212,12 @@ def get_metadata(language, dev, monthly, weekly):
         else:
             url += language.lower()
     url = add_duration_query(weekly, monthly, url)
+    return url
+
+
+def get_metadata(language, dev, monthly, weekly):
+    """Build URL, connect to page and create BeautifulSoup object, build and return result"""
+    url = build_url(language, dev, monthly, weekly)
     page = make_connection(url)
     soup = BeautifulSoup(page.text, 'lxml')
     explore_content = soup.select('.explore-content')
@@ -227,6 +237,10 @@ def get_metadata(language, dev, monthly, weekly):
 @click.option('--xml', '-x', is_flag=True, help='Save data to an XML file')
 @click.option('--silent', '-s', is_flag=True, help='Do not write to sdout')
 def main(language, dev, weekly, monthly, json, xml, silent):
+    """
+    Parse arguments using click, check for argument validation and call get_metadata function.
+    Either print or write results to JSON/XML
+    """
     if language and language.lower() not in ACCEPTED_LANGUAGES:
         LOGGER.error('Specified programming language not in supported languages')
         exit(1)

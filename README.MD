@@ -28,15 +28,16 @@ An argument free call to `pytrend` will result in the top 25 *repositories* from
 
 ### Options/Flags
 ```
-Usage: pytrend.py [OPTIONS]
+Usage: pytrend [OPTIONS]
+
 Options:
   -l, --language TEXT  Display repositories for this programming language
-  --dev                Get trending developers instead of repositories
+  -d, --dev            Get trending developers instead of repositories
   -w, --weekly         Display trending repositories from the past week
   -m, --monthly        Display trending repositories from the past month
   -j, --json           Save data to a JSON file
   -x, --xml            Save data to an XML file
-  --silent             Do not write to sdout
+  -s, --silent         Do not write to sdout
   --help               Show this message and exit.
 ```
 
