@@ -161,6 +161,7 @@ def parse_developers_info(tag):
             }
     return trending
 
+
 # END Developer parsing functions
 
 
@@ -187,6 +188,11 @@ def add_duration_query(url, weekly=None, monthly=None):
     return url
 
 
+def write_json(data):
+    with open(str(datetime.now()) + '.json', 'w') as file:
+        file.write(JSON.dumps(data, indent=4))
+
+
 def write_xml(data):
     """Write XML file """
     xml = XML_DECLARATION + ROOT
@@ -198,10 +204,12 @@ def write_xml(data):
             except AttributeError:
                 pass
         xml += END_RECORD
-    return xml + END_ROOT
+    xml += END_ROOT
+    with open(str(datetime.now()) + '.xml', 'w') as file:
+        file.write(xml)
 
 
-def build_url(language=None, dev=None, monthly=None, weekly=None):
+def build_url(language=None, dev=False, monthly=False, weekly=False):
     """Build destination URL according to arguments"""
     url = TRENDING_URL
     if dev:
@@ -247,16 +255,13 @@ def main(language, dev, weekly, monthly, json, xml, silent):
     if weekly and monthly:
         LOGGER.error('Please specify weekly OR monthly')
         exit(1)
-    if silent:
-        if not json and not xml:
-            LOGGER.error('Passed silent flag without JSON or XML flags. exiting')
-            exit(1)
+    if silent and not json and not xml:
+        LOGGER.error('Passed silent flag without JSON or XML flags. exiting')
+        exit(1)
     result = get_metadata(language=language, dev=dev, monthly=monthly, weekly=weekly)
     if not silent:
         print(JSON.dumps(result, indent=4))
     if json:
-        with open(str(datetime.now()) + '.json', 'w') as file:
-            file.write(JSON.dumps(result, indent=4))
+        write_json(result)
     if xml:
-        with open(str(datetime.now()) + '.xml', 'w') as file:
-            file.write(write_xml(result))
+        write_xml(result)

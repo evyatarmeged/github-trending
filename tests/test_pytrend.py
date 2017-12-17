@@ -1,10 +1,14 @@
+import os
 import unittest
+import json
+from random import choice
 from click.testing import CliRunner
 from pytrend_cli.pytrend import *
 import uuid
 
 
 class PyTrendTestCase(unittest.TestCase):
+    """Unittests"""
 
     def setUp(self):
         self.runner = CliRunner()
@@ -12,6 +16,10 @@ class PyTrendTestCase(unittest.TestCase):
         self.trending_url = self.base_url + 'trending/'
         self.weekly = '?since=weekly'
         self.monthly = '?since=monthly'
+        self.languages = ['javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#',
+                          'go', 'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html']
+        self.page = make_connection(self.trending_url)
+        self.mock_data = BeautifulSoup(self.page.text, 'lxml').select('.explore-content')
 
     def test_weekly_and_monthly_error(self):
         result = self.runner.invoke(main, ['-m', '-w'])
@@ -51,3 +59,50 @@ class PyTrendTestCase(unittest.TestCase):
         url = add_duration_query(self.trending_url, monthly=self.monthly)
         self.assertEqual(url, self.trending_url + self.monthly)
 
+    """Request & I/O testing"""
+
+    def test_connection(self):
+        self.assertEqual(200, make_connection(self.trending_url).status_code)
+
+    def test_lang(self):
+        # Invoke main() for each supported languages (github can take it)
+        for language in self.languages:
+            result = self.runner.invoke(main, ['-l', language])
+            repos = json.loads(result.output)
+            for key in repos.keys():
+                self.assertEqual(repos.get(key).get('Programming Language').lower(), language)
+
+    def test_no_output_on_silent(self):
+        flags = ['-j', '-x']
+        result = self.runner.invoke(main, [choice(flags), '-s'])
+        self.assertFalse(result.output)
+        for _, folders, files in os.walk(os.getcwd()):
+            for file in files:
+                if file.endswith('.xml') or file.endswith('.json'):
+                    os.remove(file)
+
+    def test_xml_writing(self):
+        write_xml(parse_repositories_info(self.mock_data))
+        exists = False
+        xml_file = None
+        for _, folders, files in os.walk(os.getcwd()):
+            for file in files:
+                if file.endswith('.xml'):
+                    xml_file = file
+                    exists = True
+        self.assertTrue(exists)
+        if xml_file:
+            os.remove(xml_file)
+
+    def test_json_writing(self):
+        write_json(parse_repositories_info(self.mock_data))
+        exists = False
+        json_file = None
+        for _, folders, files in os.walk(os.getcwd()):
+            for file in files:
+                if file.endswith('.json'):
+                    json_file = file
+                    exists = True
+        self.assertTrue(exists)
+        if json_file:
+            os.remove(json_file)
