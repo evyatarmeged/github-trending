@@ -196,7 +196,7 @@ def write_json(data):
 def write_xml(data):
     """Write XML file """
     xml = XML_DECLARATION + ROOT
-    for index, info in data.items():
+    for info in data.values():
         xml += RECORD
         for key, value in info.items():
             try:

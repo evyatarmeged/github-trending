@@ -59,7 +59,7 @@ class PyTrendTestCase(unittest.TestCase):
         url = add_duration_query(self.trending_url, monthly=self.monthly)
         self.assertEqual(url, self.trending_url + self.monthly)
 
-    """Request & I/O testing"""
+    # Request & I/O testing
 
     def test_connection(self):
         self.assertEqual(200, make_connection(self.trending_url).status_code)
@@ -76,7 +76,7 @@ class PyTrendTestCase(unittest.TestCase):
         flags = ['-j', '-x']
         result = self.runner.invoke(main, [choice(flags), '-s'])
         self.assertFalse(result.output)
-        for _, folders, files in os.walk(os.getcwd()):
+        for _, __, files in os.walk(os.getcwd()):
             for file in files:
                 if file.endswith('.xml') or file.endswith('.json'):
                     os.remove(file)
@@ -85,7 +85,7 @@ class PyTrendTestCase(unittest.TestCase):
         write_xml(parse_repositories_info(self.mock_data))
         exists = False
         xml_file = None
-        for _, folders, files in os.walk(os.getcwd()):
+        for _, __, files in os.walk(os.getcwd()):
             for file in files:
                 if file.endswith('.xml'):
                     xml_file = file

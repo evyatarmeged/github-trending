@@ -5,6 +5,7 @@
 [![version](https://img.shields.io/badge/version-1.18-brightgreen.svg?style=plastic)]()
 [![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)]()
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8db8f9940d1d4994a2cd217e5096dce8)](https://www.codacy.com/app/evyatarmeged/github-trending?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=evyatarmeged/github-trending&amp;utm_campaign=Badge_Grade)
 
 ### Description
 Pytrend-CLI is a command line tool for getting the latest (actually, current, per call) information 
