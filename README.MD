@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/evyatarmeged/github-trending.svg?branch=master)](https://travis-ci.org/evyatarmeged/github-trending)
 [![PyPI version](https://badge.fury.io/py/pytrend-cli.svg)](https://badge.fury.io/py/pytrend-cli)
 [![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
+[![downloads](https://img.shields.io/badge/downloads-1.5k-lightgrey.svg)]()
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)]()
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8db8f9940d1d4994a2cd217e5096dce8)](https://www.codacy.com/app/evyatarmeged/github-trending?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=evyatarmeged/github-trending&amp;utm_campaign=Badge_Grade)
 
