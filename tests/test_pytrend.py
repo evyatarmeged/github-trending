@@ -16,8 +16,7 @@ class PyTrendTestCase(unittest.TestCase):
         self.trending_url = self.base_url + 'trending/'
         self.weekly = '?since=weekly'
         self.monthly = '?since=monthly'
-        self.languages = ['javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#',
-                          'go', 'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html']
+        self.languages = ACCEPTED_LANGUAGES
         self.page = make_connection(self.trending_url)
         self.mock_data = BeautifulSoup(self.page.text, 'lxml').select('.explore-content')
 

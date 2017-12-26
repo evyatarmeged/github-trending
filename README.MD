@@ -14,10 +14,11 @@ about trending repositories/developers on GitHub.<br>
 Pytrend can be filtered by programming language or trending period (daily/weekly/monthly).<br>
 Currently supports top 15 most popular programming languages on GitHub (by open PRs) plus HTML.
 ![langs](http://oi64.tinypic.com/v2wp.jpg)
-
 All data is taken from <a href='https://octoverse.github.com/'>GitHub octoverse</a>.
 
-
+### Update
+Version 1.19 added support for Rust, CoffeeScript, Haskell, Groovy, Lua, Elixir, Perl, Kotlin and Clojure.
+    
 ### Installation
 `pip install pytrend-cli`
 

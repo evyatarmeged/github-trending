@@ -5,13 +5,16 @@ import json as JSON  # Importing as caps to enable @click argument `json`
 import requests
 from bs4 import BeautifulSoup
 
-
 # Constants
 
 BASE_URL = 'https://github.com/'
 TRENDING_URL = BASE_URL + 'trending/'
-ACCEPTED_LANGUAGES = ['javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#',
-                      'go', 'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html']
+ACCEPTED_LANGUAGES = [
+    'javascript', 'python', 'java', 'ruby', 'php', 'c++', 'css', 'c#', 'go',
+    'c', 'typescript', 'shell', 'swift', 'scala', 'objective-c', 'html',
+    'rust', 'coffeescript', 'haskell', 'groovy', 'lua', 'elixir',
+    'perl', 'kotlin', 'clojure'
+]
 logging.basicConfig(format='%(levelname)s - %(message)s', level=logging.INFO)
 LOGGER = logging.getLogger()
 XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8" ?>\n'
@@ -21,8 +24,8 @@ ITEM = '\t\t<{0}>{1}</{0}>\n'
 ROOT = '<root>\n'
 END_ROOT = '</root>'
 
-
 # Repository information parsing functions
+
 
 def username_and_reponame(repo_info):
     """Return user name and repository name"""
@@ -105,6 +108,7 @@ def parse_repositories_info(tag):
                 'Stars trending': get_stars_trending(list_item)
             }
     return trending
+
 
 # END Repository parsing functions
 
@@ -200,7 +204,9 @@ def write_xml(data):
         xml += RECORD
         for key, value in info.items():
             try:
-                xml += ITEM.format(''.join(key.split()), value.encode('ascii', 'ignore').decode('utf8'))
+                xml += ITEM.format(''.join(key.split()),
+                                   value.encode('ascii',
+                                                'ignore').decode('utf8'))
             except AttributeError:
                 pass
         xml += END_RECORD
@@ -250,7 +256,8 @@ def main(language, dev, weekly, monthly, json, xml, silent):
     Either print or write results to JSON/XML
     """
     if language and language.lower() not in ACCEPTED_LANGUAGES:
-        LOGGER.error('Specified programming language not in supported languages')
+        LOGGER.error(
+            'Specified programming language not in supported languages')
         exit(1)
     if weekly and monthly:
         LOGGER.error('Please specify weekly OR monthly')
@@ -258,7 +265,8 @@ def main(language, dev, weekly, monthly, json, xml, silent):
     if silent and not json and not xml:
         LOGGER.error('Passed silent flag without JSON or XML flags. exiting')
         exit(1)
-    result = get_metadata(language=language, dev=dev, monthly=monthly, weekly=weekly)
+    result = get_metadata(
+        language=language, dev=dev, monthly=monthly, weekly=weekly)
     if not silent:
         print(JSON.dumps(result, indent=4))
     if json:
