@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/evyatarmeged/github-trending.svg?branch=master)](https://travis-ci.org/evyatarmeged/github-trending)
 [![PyPI version](https://badge.fury.io/py/pytrend-cli.svg)](https://badge.fury.io/py/pytrend-cli)
 [![pyversion](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=plastic)]()
-[![downloads](https://img.shields.io/badge/downloads-1.5k-lightgrey.svg)]()
+[![downloads](https://img.shields.io/badge/downloads-2k-lightgrey.svg)]()
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)]()
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8db8f9940d1d4994a2cd217e5096dce8)](https://www.codacy.com/app/evyatarmeged/github-trending?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=evyatarmeged/github-trending&amp;utm_campaign=Badge_Grade)
 
@@ -12,9 +12,9 @@
 Pytrend-CLI is a command line tool for getting the latest (actually, current, per call) information 
 about trending repositories/developers on GitHub.<br>
 Pytrend can be filtered by programming language or trending period (daily/weekly/monthly).<br>
-Currently supports top 15 most popular programming languages on GitHub (by open PRs) plus HTML.
-![langs](http://oi64.tinypic.com/v2wp.jpg)
-All data is taken from <a href='https://octoverse.github.com/'>GitHub octoverse</a>.
+Currently supports top 25 most popular programming languages on GitHub (and HTML).<br>
+![langs](http://oi64.tinypic.com/2rf4opw.jpg)<br>
+Data is taken from <a href='https://madnight.github.io/githut/'>GitHut</a> and is true to quarter 3 of 2017.
 
 ### Update
 Version 1.19 added support for Rust, CoffeeScript, Haskell, Groovy, Lua, Elixir, Perl, Kotlin and Clojure.
